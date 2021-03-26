@@ -1,0 +1,24 @@
+version: 2
+jobs:
+  deploy:
+    machine:
+      enabled: true
+    working_directory: ~/var/www/node-express-docker
+    steps:
+      - checkout
+      - run:
+          name: GCP - Push changes
+          command: |
+            ssh root@165.227.86.48 'cd /var/www/node-express-docker && git pull'
+      - run:
+          name: GCP - Install Dependencies
+          command: |
+            ssh root@165.227.86.48 'cd /var/www/node-express-docker && docker-compose up --build -d'
+workflows:
+  version: 2
+  deploy-and-build:
+    jobs:
+      - deploy:
+          filters:
+            branches:
+              only: master
